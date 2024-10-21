@@ -1,27 +1,35 @@
 function filterData(event) {
-  event.preventDefault(); // Prevent page reload on form submission
+  event.preventDefault(); // Prevent page reload
 
   const startdate = new Date(document.getElementById("startdate").value);
   const enddate = new Date(document.getElementById("enddate").value);
-  console.log("Starting date: " + startdate);
-  console.log("Ending date: " + enddate);
+  console.log("Starting date:", startdate);
+  console.log("Ending date:", enddate);
 
   const rows = document.querySelectorAll("#data-table tbody tr");
 
   rows.forEach(row => {
-    const dateCell = row.cells[3]?.textContent.trim(); // Get date from 4th column (Datetime)
-    if (dateCell === "--") {
-      row.style.display = "none"; // Hide row if date is missing
+    const dateCell = row.cells[3]?.textContent.trim(); // Get the date from 4th column
+
+    // Skip rows with missing or invalid dates
+    if (!dateCell || dateCell === "--") {
+      row.style.display = "none";
       return;
     }
 
+    // Ensure consistent date parsing
     const rowDate = new Date(dateCell);
+    if (isNaN(rowDate.getTime())) {
+      console.warn(`Invalid date: ${dateCell}`);
+      row.style.display = "none";
+      return;
+    }
 
-    // Check if rowDate is within the range
+    // Check if rowDate is within the start and end date range
     if (rowDate >= startdate && rowDate <= enddate) {
-      row.style.display = ""; // Show row
+      row.style.display = ""; // Show matching rows
     } else {
-      row.style.display = "none"; // Hide row
+      row.style.display = "none"; // Hide rows outside the range
     }
   });
 }
