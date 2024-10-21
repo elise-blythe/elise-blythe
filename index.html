@@ -12,31 +12,20 @@
       <input type="date" id="enddate"></input>
       <button>Filter</button>
     </form>
-    <table>
-      <tr>
-        <th>ID</th>
-        <th>Speed</th>
-        <th>Result</th>        
-        <th>Datetime</th>
-      </tr>
-      <tr>
-        <td><a href="details.html">Pitch 12345</a></td>
-        <td>95</td>
-        <td>--</td>
-        <td>--</td>
-      </tr>
-       <tr>
-        <td><a href="details.html">Pitch 12346</a></td>
-        <td>92</td>
-        <td>--</td>
-        <td>--</td>
-      </tr>
-       <tr>
-        <td><a href="details.html">Pitch 12347</a></td>
-        <td>75</td>
-        <td>K</td>
-        <td>--</td>
-      </tr>
+    <table id="data-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Speed</th>
+          <th>Result</th>        
+          <th>Datetime</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td colspan="4">Loading data...</td>
+        </tr>
+      </tbody>
     </table>
     <script src="script.js"></script>
   </body>

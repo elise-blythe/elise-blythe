@@ -22,3 +22,30 @@ a:hover {
 h1 {
   text-align: center;
 }
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #333;
+  color: #fff;
+}
+table {
+  width: 80%;
+  margin: 20px auto;
+  border-collapse: collapse;
+  background-color: #444;
+}
+th, td {
+  border: 1px solid #555;
+  padding: 8px 12px;
+  text-align: center;
+}
+th {
+  background-color: #222;
+}
+a {
+  color: #4dc3ff;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
