@@ -1,10 +1,29 @@
-function filterData() {
-  event.preventDefault();
-  var startdate = document.getElementById("startdate").value;
-  var enddate = document.getElementById("enddate").value;
+function filterData(event) {
+  event.preventDefault(); // Prevent page reload on form submission
+
+  const startdate = new Date(document.getElementById("startdate").value);
+  const enddate = new Date(document.getElementById("enddate").value);
   console.log("Starting date: " + startdate);
   console.log("Ending date: " + enddate);
-  fetch("https://compute.samford.edu/zohauth/clients/data");
+
+  const rows = document.querySelectorAll("#data-table tbody tr");
+
+  rows.forEach(row => {
+    const dateCell = row.cells[3]?.textContent.trim(); // Get date from 4th column (Datetime)
+    if (dateCell === "--") {
+      row.style.display = "none"; // Hide row if date is missing
+      return;
+    }
+
+    const rowDate = new Date(dateCell);
+
+    // Check if rowDate is within the range
+    if (rowDate >= startdate && rowDate <= enddate) {
+      row.style.display = ""; // Show row
+    } else {
+      row.style.display = "none"; // Hide row
+    }
+  });
 }
 
  // Fetch and populate data
