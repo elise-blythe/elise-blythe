@@ -191,36 +191,47 @@
         const data = await response.json();
 
         tableBody.innerHTML = ''; // Clear loading row
-        const speeds = [];
+
+        const speeds = [], ids = [], results = [];
 
         data.forEach(item => {
           const row = document.createElement('tr');
           row.innerHTML = `
-            <td><a href="details.html?id=${item.id}">${item.id}</a></td>
+            <td>${item.id}</td>
             <td>${item.speed}</td>
             <td>${item.result || '--'}</td>
             <td>${item.datetime || '--'}</td>
           `;
           tableBody.appendChild(row);
+
+          ids.push(item.id);
           if (item.speed) speeds.push(Number(item.speed));
+          if (item.result) results.push(item.result);
         });
 
-        displayStats(speeds);
+        displayStats(ids, speeds, results);
       } catch (error) {
         console.error('Failed to fetch data:', error);
         tableBody.innerHTML = '<tr><td colspan="4">Error loading data.</td></tr>';
       }
     }
 
-    function displayStats(speeds) {
-      const mean = (speeds.reduce((a, b) => a + b, 0) / speeds.length).toFixed(2);
-      const median = speeds.sort((a, b) => a - b)[Math.floor(speeds.length / 2)];
-      const mode = speeds
-        .sort((a, b) => speeds.filter(v => v === a).length - speeds.filter(v => v === b).length)
-        .pop();
+    function displayStats(ids, speeds, results) {
+      const stats = {
+        mean: (arr) => (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2),
+        median: (arr) => arr.sort((a, b) => a - b)[Math.floor(arr.length / 2)],
+        mode: (arr) => arr.sort((a, b) =>
+          arr.filter(v => v === a).length - arr.filter(v => v === b).length
+        ).pop()
+      };
 
-      document.getElementById('stats').textContent = 
-        `Mean Speed: ${mean} | Median Speed: ${median} | Mode Speed: ${mode}`;
+      const statsHTML = `
+        <div>Speed - Mean: ${stats.mean(speeds)}, Median: ${stats.median(speeds)}, Mode: ${stats.mode(speeds)}</div>
+        <div>ID - Mode: ${stats.mode(ids)}</div>
+        <div>Result - Mode: ${stats.mode(results)}</div>
+      `;
+
+      document.getElementById('stats').innerHTML = statsHTML;
     }
 
     function filterData(event) {
