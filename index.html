@@ -94,7 +94,8 @@
       box-shadow: 0 8px 16px var(--shadow-color);
     }
 
-    th, td {
+    th,
+    td {
       padding: 15px;
       text-align: center;
     }
@@ -192,7 +193,7 @@
 
         tableBody.innerHTML = ''; // Clear loading row
 
-        const speeds = [], ids = [], results = [];
+        const speeds = [], results = [];
 
         data.forEach(item => {
           const row = document.createElement('tr');
@@ -204,30 +205,36 @@
           `;
           tableBody.appendChild(row);
 
-          ids.push(item.id);
           if (item.speed) speeds.push(Number(item.speed));
           if (item.result) results.push(item.result);
         });
 
-        displayStats(ids, speeds, results);
+        displayStats(speeds, results);
       } catch (error) {
         console.error('Failed to fetch data:', error);
         tableBody.innerHTML = '<tr><td colspan="4">Error loading data.</td></tr>';
       }
     }
 
-    function displayStats(ids, speeds, results) {
+    function displayStats(speeds, results) {
       const stats = {
         mean: (arr) => (arr.reduce((a, b) => a + b, 0) / arr.length).toFixed(2),
-        median: (arr) => arr.sort((a, b) => a - b)[Math.floor(arr.length / 2)],
-        mode: (arr) => arr.sort((a, b) =>
-          arr.filter(v => v === a).length - arr.filter(v => v === b).length
-        ).pop()
+        median: (arr) => {
+          const sorted = arr.slice().sort((a, b) => a - b);
+          const mid = Math.floor(sorted.length / 2);
+          return sorted.length % 2 === 0 ? ((sorted[mid - 1] + sorted[mid]) / 2).toFixed(2) : sorted[mid].toFixed(2);
+        },
+        mode: (arr) => {
+          const frequency = {};
+          arr.forEach(num => frequency[num] = (frequency[num] || 0) + 1);
+          const maxFreq = Math.max(...Object.values(frequency));
+          const modes = Object.keys(frequency).filter(num => frequency[num] === maxFreq);
+          return modes.length > 1 ? "No unique mode" : modes[0];
+        }
       };
 
       const statsHTML = `
         <div>Speed - Mean: ${stats.mean(speeds)}, Median: ${stats.median(speeds)}, Mode: ${stats.mode(speeds)}</div>
-        <div>ID - Mode: ${stats.mode(ids)}</div>
         <div>Result - Mode: ${stats.mode(results)}</div>
       `;
 
