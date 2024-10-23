@@ -5,6 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trackman Pitch Stats Viewer</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="https://www.samford.edu/departments/images/Marketing/logos/Samford-Athletics-Logo.svg" type="image/svg+xml">
 
   <style>
     /* Root Variables - Samford Colors */
@@ -266,10 +269,8 @@
       const tbody = table.querySelector("tbody");
       tbody.innerHTML = '';
       rows.forEach(row => tbody.appendChild(row));
-    }
 
-    fetchData();
-  </script>
-
-</body>
-</html>
+      // Update sorting class
+      Array.from(table.querySelectorAll("th")).forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
+      table.querySelector(`th:nth-child(${columnIndex + 1})`).classList.toggle('sorted-asc', isAscending);
+      table.querySelector(`th:nth-child(${columnIndex + 1})`).class
