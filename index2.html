@@ -5,84 +5,151 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Trackman Pitch Stats Viewer</title>
+
   <style>
-    /* Samford Color Scheme */
+    /* Root Variables - Samford Colors */
     :root {
       --primary-blue: #0C2340;
       --secondary-red: #BD1F2D;
       --light-gray: #E1E1E1;
-      --dark-gray: #444;
+      --dark-gray: #333;
       --white: #FFFFFF;
+      --table-hover: rgba(255, 255, 255, 0.1);
+      --shadow-color: rgba(0, 0, 0, 0.2);
     }
 
-    /* General Reset & Styles */
+    /* Reset Styles */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Arial', sans-serif;
     }
 
     body {
-      font-family: 'Arial', sans-serif;
       background-color: var(--primary-blue);
       color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     h1 {
-      text-align: center;
-      padding: 20px 0;
-      background-color: var(--secondary-red);
-      font-size: 2.5em;
+      margin-top: 20px;
+      font-size: 2.5rem;
       text-transform: uppercase;
+      text-align: center;
+      letter-spacing: 2px;
+      background-color: var(--secondary-red);
+      width: 100%;
+      padding: 20px 0;
+      box-shadow: 0 4px 8px var(--shadow-color);
     }
 
     form {
+      margin: 30px 0;
       display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin: 20px 0;
+      gap: 20px;
     }
 
     input[type="date"] {
-      padding: 8px;
-      border-radius: 5px;
+      padding: 10px;
       border: 1px solid var(--light-gray);
-      outline: none;
+      border-radius: 5px;
+      background-color: var(--dark-gray);
+      color: var(--white);
     }
 
     button {
       background-color: var(--secondary-red);
       color: var(--white);
       border: none;
-      padding: 10px 15px;
+      padding: 10px 20px;
       border-radius: 5px;
       cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #a11d25;
     }
 
     table {
       width: 90%;
-      margin: 20px auto;
+      max-width: 1200px;
+      margin: 20px 0;
       border-collapse: collapse;
       background-color: var(--dark-gray);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 8px 16px var(--shadow-color);
+    }
+
+    thead {
+      background-color: var(--primary-blue);
     }
 
     th, td {
       padding: 15px;
-      border: 1px solid var(--light-gray);
       text-align: center;
     }
 
     th {
-      background-color: var(--primary-blue);
       cursor: pointer;
+      position: relative;
+      user-select: none;
+    }
+
+    th::after {
+      content: '';
+      position: absolute;
+      right: 10px;
+      transition: transform 0.3s ease;
     }
 
     th.sorted-asc::after {
-      content: ' ▲';
+      content: '▲';
+      transform: rotate(0);
     }
 
     th.sorted-desc::after {
-      content: ' ▼';
+      content: '▼';
+      transform: rotate(0);
+    }
+
+    tbody tr {
+      transition: background-color 0.3s ease;
+    }
+
+    tbody tr:hover {
+      background-color: var(--table-hover);
+    }
+
+    td a {
+      color: var(--white);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    td a:hover {
+      color: var(--light-gray);
+    }
+
+    @media (max-width: 768px) {
+      th, td {
+        padding: 10px;
+      }
+
+      form {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+      }
+
+      button {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -91,7 +158,7 @@
   <h1>Trackman Pitch Stats Viewer</h1>
 
   <form onsubmit="filterData(event);">
-    <label for="startdate">Starting Date</label>
+    <label for="startdate">Start Date</label>
     <input type="date" id="startdate">
     <label for="enddate">End Date</label>
     <input type="date" id="enddate">
@@ -126,7 +193,7 @@
         data.forEach(item => {
           const row = document.createElement('tr');
           row.innerHTML = `
-            <td>${item.id}</td>
+            <td><a href="details.html?id=${item.id}">${item.id}</a></td>
             <td>${item.speed}</td>
             <td>${item.result || '--'}</td>
             <td>${item.datetime || '--'}</td>
@@ -149,7 +216,6 @@
         const dateText = row.cells[3].textContent.trim();
         const rowDate = new Date(dateText);
 
-        // Check if rowDate is valid and within the range
         if (isNaN(rowDate) || rowDate < startDate || rowDate > endDate) {
           row.style.display = "none";
         } else {
@@ -166,9 +232,10 @@
       rows.sort((a, b) => {
         const aText = a.cells[columnIndex].textContent.trim();
         const bText = b.cells[columnIndex].textContent.trim();
-        if (columnIndex === 1) return isAscending ? aText - bText : bText - aText;
-        return isAscending ? aText.localeCompare(bText) : bText.localeCompare(aText);
+        return columnIndex === 1 ? aText - bText : aText.localeCompare(bText);
       });
+
+      if (!isAscending) rows.reverse();
 
       const tbody = table.querySelector("tbody");
       tbody.innerHTML = '';
