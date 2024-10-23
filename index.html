@@ -273,4 +273,12 @@
       // Update sorting class
       Array.from(table.querySelectorAll("th")).forEach(th => th.classList.remove('sorted-asc', 'sorted-desc'));
       table.querySelector(`th:nth-child(${columnIndex + 1})`).classList.toggle('sorted-asc', isAscending);
-      table.querySelector(`th:nth-child(${columnIndex + 1})`).class
+      table.querySelector(`th:nth-child(${columnIndex + 1})`).classList.toggle('sorted-desc', !isAscending);
+    }
+
+    // Call fetchData on page load
+    document.addEventListener('DOMContentLoaded', fetchData);
+  </script>
+</body>
+
+</html>
